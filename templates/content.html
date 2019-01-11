@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{.Title}}</title>
+</head>
+<body>
+	<a href="/all">All</a>
+	{{if eq .Type 0}}
+	<h1>{{.Title}}</h1>
+	{{end}}
+	{{if .ResponseToURLPreview}}
+	{{if eq .Type 1}}
+	<h1>🔛</h1>
+	{{else if eq .Type 2}}
+	<h1>🖤</h1>
+	{{else}}
+	<p>In response to:</p>
+	{{end}}
+	{{with .ResponseToURLPreview}}
+	<div>
+		{{if .OembedHTML}}
+		<div>{{.OembedHTML}}</div>
+		{{else}}
+		<p><a href="{{.URL}}">{{.Title}}</a></p>
+		<p>{{.Snippet}}</p>
+		{{if .ThumbnailURL}}
+		<img src="{{.ThumbnailURL}}"/>
+		{{end}}
+		{{end}}
+	</div>
+	{{end}}
+	{{end}}
+	<div>
+	{{.HTML}}
+	</div>
+	<p>{{.DateString}}</p>
+	<a href="?edit">Edit</a>
+</body>
+</html>

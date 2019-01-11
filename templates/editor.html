@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<form action="/content" method="POST">
+	{{if .ID}}
+	<input type="hidden" name="ID" value="{{.ID}}"/>
+	<div>
+		<label>Edit Mode <a href="/content/{{.URI}}">{{.URI}}</a></label>
+		<label><input type="radio" name="TransactionType" value="UPDATE" checked/> UPDATE</label>
+		<label><input type="radio" name="TransactionType" value="DELETE"/> DELETE</label>
+	</div>
+	{{else}}
+	<div>
+		<label>Post Type</label>
+		<ul>
+			<li><label><input type="radio" name="Type" value="0" checked/> Post</label></li>
+			<li><label><input type="radio" name="Type" value="1"/> Repost</label></li>
+			<li><label><input type="radio" name="Type" value="2"/> Heart</label></li>
+		</ul>
+	</div>
+	{{end}}
+
+	<div>
+		<label>Title</label>
+		<input type="text" name="Title" value="{{.Title}}"/>
+	</div>
+	<div>
+		<label>URI</label>
+		<input type="text" name="URI" value="{{.URI}}"/>
+	</div>
+	<div>
+		<label>Date/Time</label>
+		<input type="date" name="DateString" value="{{.DateInputString}}"/>
+		<input type="time" name="TimeString" value="{{.TimeInputString}}"/>
+	</div>
+	<div>
+		<label for="ResponseToURL">Response To URL</label>
+		<input type="text" name="ResponseToURL" value="{{.ResponseToURL}}"/>
+		<label for="Rescrape">
+			Rescrape?
+			<input type="checkbox" name="Rescrape"/>
+		</label>
+	</div>
+	
+	<div>
+		<label for="Body">Body</label><br/>
+		<textarea name="Body" cols=80 rows=30>{{.HTML}}</textarea>
+	</div>
+
+	<div>
+		<label for="Snippet">Snippet</label><br/>
+		<textarea name="Snippet" cols=80 rows=4>{{.Snippet}}</textarea>
+	</div>
+
+	<div>
+		<label>Password</label>
+		<input type="text" name="Username" value="123" disabled/>
+		<input type="password" name="Password"/>
+	</div>
+	<button>Save</button>
+</form>
+</body>
+</html>
