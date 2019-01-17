@@ -268,6 +268,11 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string)
 	})
 
 	r.POST("/files", func(c *gin.Context) {
+		if !IsAuthorized(c) {
+			HandleError(c, ErrNoAuth)
+			return
+		}
+
 		dir := c.PostForm("Directory")
 		h, err := c.FormFile("File")
 		if err != nil {
@@ -317,6 +322,11 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string)
 			return
 		}
 		if fi.IsDir() {
+			if !IsAuthorized(c) {
+				HandleError(c, ErrNoAuth)
+				return
+			}
+
 			var files []FileItem
 			if err := filepath.Walk(filename, func(path string, info os.FileInfo, err error) error {
 				if path == filename {
