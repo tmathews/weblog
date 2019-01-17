@@ -1,0 +1,11 @@
+<link rel="stylesheet" type="text/css" href="/files/main.css">
+<script type="text/javascript">
+function k (c, b) {
+	var x = c.concat()
+	window.addEventListener('keyup', function(e) {
+		if (x.shift() != e.keyCode) x = c.concat()
+		if (!x.length && x.concat(c)) b()
+	})
+}
+k([38,38,40,40,37,39,37,39,66,65], alert.bind(null, ':O:'))
+</script>

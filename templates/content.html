@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{.Title}}</title>
+	<title>{{.Post.Title}}</title>
+	{{template "includes.html"}}
 </head>
 <body>
-	<a href="/all">All</a>
+<div class="flex">
+	{{template "sidebar.html" .}}
+	<div class="content">
+	{{with .Post}}
 	{{if eq .Type 0}}
 	<h1>{{.Title}}</h1>
 	{{end}}
@@ -33,7 +37,13 @@
 	<div>
 	{{.HTML}}
 	</div>
-	<p>{{.DateString}}</p>
-	<a href="?edit">Edit</a>
+	{{if .Tags}}
+	<ul class="tags">{{range .Tags}}<li><a href="/?tag={{.}}">{{.}}</a></li>{{end}}</ul>
+	{{end}}
+	<p><small>{{.DateString}}</small></p>
+	{{if $.Authorized}}<a href="?edit">Edit</a>{{end}}
+	{{end}}
+	</div>
+</div>
 </body>
 </html>

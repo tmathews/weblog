@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Tom's Blog</title>
+</head>
+<body>
+<ul>
+<h1>Login</h1>
+{{if .Error}}
+<p>{{.Error}}</p>
+{{end}}
+<form action="/login" method="POST">
+	<div>
+		<label>Password</label>
+		<input type="password" name="Password"/>
+	</div>
+	<button>Login</button>
+</form>
+</body>
+</html>

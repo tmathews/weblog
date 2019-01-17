@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{.Directory}}</title>
+</head>
+<body>
+<form action="/files" method="POST" enctype="multipart/form-data">
+    <input type="text" name="Directory" placeholder="Directory" value="{{.Directory}}"/>
+    <input type="file" name="File"/>
+    <button>Upload</button>
+</form>
+<ul>
+{{range .Files}}
+    <li>
+        <a href="/files{{.Path}}">{{.Path}}</a>
+        <a href="/files{{.Path}}?delete=1">🗑️</a>
+    </li>
+{{end}}
+</ul>
+</body>
+</html>

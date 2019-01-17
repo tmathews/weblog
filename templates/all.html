@@ -1,45 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Tom's Blog</title>
+    <title>Tom's Blog</title>
+    {{template "includes.html"}}
 </head>
 <body>
-<ul>
-<h1>Tom's Blog</h1>
-<a href="/new">New Post</a>
-{{range .Items}}
-<li class="{{if eq .Type 1}}repost{{end}}">
-	{{if eq .Type 0}}
-	<p><a href="/content/{{.URI}}">{{.Title}}</a></p>
-	{{end}}
-	{{if .ResponseToURLPreview}}
-	{{if eq .Type 1}}
-	<p><a href="/content/{{.URI}}">🔛</a></p>
-	{{else if eq .Type 2}}
-	<p><a href="/content/{{.URI}}">🖤</a></p>
-	{{else}}
-	<p>In response to:</p>
-	{{end}}
-	{{with .ResponseToURLPreview}}
-	<div>
-		{{if .OembedHTML}}
-		<div>{{.OembedHTML}}</div>
-		{{else}}
-		<p><a href="{{.URL}}">{{.Title}}</a></p>
-		<p>{{.Snippet}}</p>
-		{{if .ThumbnailURL}}
-		<img src="{{.ThumbnailURL}}"/>
-		{{end}}
-		{{end}}
-	</div>
-	{{end}}
-	{{end}}
-	{{if eq .Type 0}}
-	<p>{{.Snippet}}</p>
-	{{end}}
-	<p>{{.DateString}}</p>
-</li>
-{{end}}
-</ul>
+<div class="flex">
+    {{template "sidebar.html" .}}
+    <div class="content">
+        {{if .Items}}
+        <ul class="plain-list post-list">
+            {{range .Items}}
+                <li class="{{if eq .Type 1}}repost{{end}}">
+                    {{if eq .Type 0}}
+                        <h3><a href="/content/{{.URI}}">{{.Title}}</a></h3>
+                    {{end}}
+                    {{if .ResponseToURLPreview}}
+                        {{if eq .Type 1}}
+                            <h3><a href="/content/{{.URI}}">🔛</a></h3>
+                        {{else if eq .Type 2}}
+                            <h3><a href="/content/{{.URI}}">🖤</a></h3>
+                        {{else}}
+                            <p>In response to:</p>
+                        {{end}}
+                        {{with .ResponseToURLPreview}}
+                            <div>
+                                {{if .OembedHTML}}
+                                    <div>{{.OembedHTML}}</div>
+                                {{else}}
+                                    <p><a href="{{.URL}}">{{.Title}}</a></p>
+                                    <p>{{.Snippet}}</p>
+                                    {{if .ThumbnailURL}}
+                                        <img src="{{.ThumbnailURL}}"/>
+                                    {{end}}
+                                {{end}}
+                            </div>
+                        {{end}}
+                    {{end}}
+                    {{if eq .Type 0}}
+                        {{.HTML}}
+                    {{end}}
+                    <p><small>{{.DateString}}</small></p>
+                    {{if .Tags}}
+                    <ul class="tags">{{range .Tags}}<li><a href="/?tag={{.}}">{{.}}</a></li>{{end}}</ul>
+                    {{end}}
+                    {{if $.Authorized}}<a href="/content/{{.URI}}?edit">Edit</a>{{end}}
+                </li>
+            {{end}}
+        </ul>
+        <div>
+            {{if .Page.HasPrevious}}<a href="./all?page={{.Page.Previous}}">Previous</a>{{end}}
+            {{if .Page.HasNext}}<a href="./all?page={{.Page.Next}}">Next</a>{{end}}
+        </div>
+        {{else}}
+            <p>Huh, no items for that one.</p>
+        {{end}}
+        {{template "footer.html"}}
+    </div>
+</div>
 </body>
 </html>

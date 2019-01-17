@@ -1,66 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>Editor</title>
+	<script type="text/javascript" src="https://unpkg.com/pell"></script>
+	{{template "includes.html"}}
 </head>
 <body>
-<form action="/content" method="POST">
-	{{if .ID}}
-	<input type="hidden" name="ID" value="{{.ID}}"/>
-	<div>
-		<label>Edit Mode <a href="/content/{{.URI}}">{{.URI}}</a></label>
-		<label><input type="radio" name="TransactionType" value="UPDATE" checked/> UPDATE</label>
-		<label><input type="radio" name="TransactionType" value="DELETE"/> DELETE</label>
-	</div>
-	{{else}}
-	<div>
-		<label>Post Type</label>
-		<ul>
-			<li><label><input type="radio" name="Type" value="0" checked/> Post</label></li>
-			<li><label><input type="radio" name="Type" value="1"/> Repost</label></li>
-			<li><label><input type="radio" name="Type" value="2"/> Heart</label></li>
-		</ul>
-	</div>
-	{{end}}
+<div class="content">
+	<form action="/content" method="POST" class="editor">
+		{{if .ID}}
+		<h1><a href="/content/{{.URI}}">{{.URI}}</a></h1>
+		<input type="hidden" name="ID" value="{{.ID}}"/>
+		<div>
+			<label class="header">Edit Mode</label>
+			<label><input type="radio" name="TransactionType" value="UPDATE" checked/> UPDATE</label>
+			<label><input type="radio" name="TransactionType" value="DELETE"/> DELETE</label>
+		</div>
+		{{else}}
+		<h1>New Post</h1>
+		<div>
+			<label class="header">Post Type</label>
+			<label><input type="radio" name="Type" value="0" checked/> Post</label>
+			<label><input type="radio" name="Type" value="1"/> Repost</label>
+			<label><input type="radio" name="Type" value="2"/> Heart</label>
+			</ul>
+		</div>
+		{{end}}
 
-	<div>
-		<label>Title</label>
-		<input type="text" name="Title" value="{{.Title}}"/>
-	</div>
-	<div>
-		<label>URI</label>
-		<input type="text" name="URI" value="{{.URI}}"/>
-	</div>
-	<div>
-		<label>Date/Time</label>
-		<input type="date" name="DateString" value="{{.DateInputString}}"/>
-		<input type="time" name="TimeString" value="{{.TimeInputString}}"/>
-	</div>
-	<div>
-		<label for="ResponseToURL">Response To URL</label>
-		<input type="text" name="ResponseToURL" value="{{.ResponseToURL}}"/>
-		<label for="Rescrape">
-			Rescrape?
-			<input type="checkbox" name="Rescrape"/>
-		</label>
-	</div>
-	
-	<div>
-		<label for="Body">Body</label><br/>
-		<textarea name="Body" cols=80 rows=30>{{.HTML}}</textarea>
-	</div>
+		<div>
+			<label class="header">Title</label>
+			<input type="text" name="Title" value="{{.Title}}"/>
+		</div>
+		<div>
+			<label class="header">URI</label>
+			<input type="text" name="URI" value="{{.URI}}"/>
+		</div>
+		<div>
+			<label class="header">Date/Time</label>
+			<input type="date" name="DateString" value="{{.DateInputString}}"/>
+			<input type="time" name="TimeString" value="{{.TimeInputString}}"/>
+		</div>
+		<div>
+			<label class="header" for="ResponseToURL">Response To URL</label>
+			<input type="text" name="ResponseToURL" value="{{.ResponseToURL}}"/>
+			<label for="Rescrape">
+				Rescrape?
+				<input type="checkbox" name="Rescrape"/>
+			</label>
+		</div>
+		
+		<div>
+			<div id="content" class="pell"></div>
+			<textarea name="Body" cols=80 rows=30>{{.HTML}}</textarea>
+		</div>
 
-	<div>
-		<label for="Snippet">Snippet</label><br/>
-		<textarea name="Snippet" cols=80 rows=4>{{.Snippet}}</textarea>
-	</div>
+		<div>
+			<label for="Tags">Tags</label><br/>
+			<input name="TagString" value="{{.TagString}}"/>
+		</div>
 
-	<div>
-		<label>Password</label>
-		<input type="text" name="Username" value="123" disabled/>
-		<input type="password" name="Password"/>
-	</div>
-	<button>Save</button>
-</form>
+		<div>
+			<label for="Snippet">Snippet</label><br/>
+			<input name="Snippet" value="{{.Snippet}}"/>
+		</div>
+
+		<button>Save</button>
+	</form>
+</div>
+
+<script type="text/javascript">
+var content = document.getElementById('content')
+var body = document.querySelector("textarea[name='Body']")
+var snippet = document.querySelector("input[name='Snippet']")
+body.style.display = "none"
+var editor = pell.init({
+	element: content,
+	onChange: (html) => {
+		console.log("why tho?")
+		body.textContent = html
+		var p = content.querySelector('p')
+		if (p) {
+			snippet.value = p.textContent
+		}
+	},
+	defaultParagraphSeparator: 'p',
+	styleWithCSS: false,
+	actions: [
+		'heading2',
+		'bold',
+		'underline',
+		'italic',
+		'quote',
+		'strikethrough',
+		'olist',
+		'ulist',
+		'code',
+		'line',
+		'link',
+		'image',
+	],
+})
+var x = body.textContent
+if (x == "") {
+	x = "<p>Hello world</p>"
+}
+editor.content.innerHTML = x
+</script>
+
 </body>
 </html>
