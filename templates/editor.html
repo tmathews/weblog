@@ -11,6 +11,7 @@
 		{{if .ID}}
 		<h1><a href="/content/{{.URI}}">{{.URI}}</a></h1>
 		<input type="hidden" name="ID" value="{{.ID}}"/>
+		<input type="hidden" name="Type" value="{{.Type}}"/>
 		<div>
 			<label class="header">Edit Mode</label>
 			<label><input type="radio" name="TransactionType" value="UPDATE" checked/> UPDATE</label>
@@ -101,7 +102,7 @@ var editor = pell.init({
 	],
 })
 var x = body.textContent
-if (x == "") {
+if (x == "" && {{.Type}} == 0) {
 	x = "<p>Hello world</p>"
 }
 editor.content.innerHTML = x
