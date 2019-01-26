@@ -166,7 +166,7 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string)
 		c.HTML(500, editor+".html", &sample)
 	})
 
-	r.GET("/content/:contentUri", func(c *gin.Context) {
+	r.GET("/post/:contentUri", func(c *gin.Context) {
 		tx, err := db.Begin()
 		if err != nil {
 			HandleError(c, err)
@@ -186,14 +186,14 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string)
 			c.JSON(200, content)
 			return
 		}
-		c.HTML(200, "content.html", M{
+		c.HTML(200, "post.html", M{
 			"Authorized": IsAuthorized(c),
 			"Post":       content,
 		})
 	})
 
 	// Create, update, or delete an author's content
-	r.POST("/content", func(c *gin.Context) {
+	r.POST("/post", func(c *gin.Context) {
 		if !IsAuthorized(c) {
 			HandleError(c, ErrNoAuth)
 			return

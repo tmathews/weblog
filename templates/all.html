@@ -13,38 +13,45 @@
             {{range .Items}}
                 <li class="{{if eq .Type 1}}repost{{end}}">
                     {{if eq .Type 0}}
-                        <h3><a href="/content/{{.URI}}">{{.Title}}</a></h3>
+                        <h1><a href="/post/{{.URI}}">{{.Title}}</a></h1>
                     {{end}}
                     {{if .ResponseToURLPreview}}
                         {{if eq .Type 1}}
-                            <h3><a href="/content/{{.URI}}">🔛</a></h3>
+                            <h1 title="Repost: {{.Title}}">🔛</h1>
                         {{else if eq .Type 2}}
-                            <h3><a href="/content/{{.URI}}">🖤</a></h3>
+                            <h1 title="Like: {{.Title}}">🖤</h1>
                         {{else}}
                             <p>In response to:</p>
                         {{end}}
-                        {{with .ResponseToURLPreview}}
-                            <div>
-                                {{if .OembedHTML}}
-                                    <div>{{.OembedHTML}}</div>
-                                {{else}}
-                                    <p><a href="{{.URL}}">{{.Title}}</a></p>
-                                    <p>{{.Snippet}}</p>
-                                    {{if .ThumbnailURL}}
-                                        <img src="{{.ThumbnailURL}}"/>
+                        {{if not .ResponseToURLPreview.IsFulfilled}}
+                            {{if eq .Type 1 2}}
+                                <p>{{.Title}}</p>
+                                <p><a href="{{.ResponseToURL}}">{{.ResponseToURL}}</a></p>
+                            {{end}}
+                        {{else}}
+                            {{with .ResponseToURLPreview}}
+                                <div>
+                                    {{if .OembedHTML}}
+                                        <div>{{.OembedHTML}}</div>
+                                    {{else}}
+                                        <p><a href="{{.URL}}">{{.Title}}</a></p>
+                                        <p>{{.Snippet}}</p>
+                                        {{if .ThumbnailURL}}
+                                            <img src="{{.ThumbnailURL}}"/>
+                                        {{end}}
                                     {{end}}
-                                {{end}}
-                            </div>
+                                </div>
+                            {{end}}
                         {{end}}
                     {{end}}
-                    {{if eq .Type 0}}
+                    <div>
                         {{.HTML}}
+                    </div>
+                    {{if .Tags}}
+                        <ul class="tags">{{range .Tags}}<li><a href="/?tag={{.}}">{{.}}</a></li>{{end}}</ul>
                     {{end}}
                     <p><small>{{.DateString}}</small></p>
-                    {{if .Tags}}
-                    <ul class="tags">{{range .Tags}}<li><a href="/?tag={{.}}">{{.}}</a></li>{{end}}</ul>
-                    {{end}}
-                    {{if $.Authorized}}<a href="/content/{{.URI}}?edit">Edit</a>{{end}}
+                    {{if $.Authorized}}<a href="?edit">Edit</a>{{end}}
                 </li>
             {{end}}
         </ul>

@@ -19,7 +19,7 @@ func main() {
 	flag.StringVar(&password, "password", "password", "The password to validate editing.")
 	flag.StringVar(&dbfile, "dbfile", "./a.db", "The database file to use for SQLite3.")
 	flag.StringVar(&templateGlob, "templates", "./templates/*.html", "The template glob to use.")
-	flag.StringVar(&assetsDir, "assets", "", "Assets directory to serve. (Optional)")
+	flag.StringVar(&assetsDir, "files", "./files", "Assets directory to serve.")
 	flag.BoolVar(&sampleme, "sample", false, "Create the sample post on start up?")
 	flag.Parse()
 

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{.Post.Title}}</title>
+	{{template "includes.html"}}
+</head>
+<body>
+<div class="flex">
+	{{template "sidebar.html" .}}
+	<div class="content">
+	{{with .Post}}
+		{{if eq .Type 0}}
+		<h1>{{.Title}}</h1>
+		{{end}}
+		{{if .ResponseToURLPreview}}
+			{{if eq .Type 1}}
+			<h1 title="Repost: {{.Title}}">🔛</h1>
+			{{else if eq .Type 2}}
+			<h1 title="Like: {{.Title}}">🖤</h1>
+			{{else}}
+			<p>In response to:</p>
+		{{end}}
+		{{if not .ResponseToURLPreview.IsFulfilled}}
+			{{if eq .Type 1 2}}
+			<p>{{.Title}}</p>
+			<p><a href="{{.ResponseToURL}}">{{.ResponseToURL}}</a></p>
+			{{end}}
+		{{else}}
+			{{with .ResponseToURLPreview}}
+			<div>
+				{{if .OembedHTML}}
+					<div>{{.OembedHTML}}</div>
+				{{else}}
+					<p><a href="{{.URL}}">{{.Title}}</a></p>
+					<p>{{.Snippet}}</p>
+					{{if .ThumbnailURL}}
+						<img src="{{.ThumbnailURL}}"/>
+					{{end}}
+				{{end}}
+			</div>
+			{{end}}
+		{{end}}
+	{{end}}
+	<div>
+	{{.HTML}}
+	</div>
+	{{if .Tags}}
+	<ul class="tags">{{range .Tags}}<li><a href="/?tag={{.}}">{{.}}</a></li>{{end}}</ul>
+	{{end}}
+	<p><small>{{.DateString}}</small></p>
+	{{if $.Authorized}}<a href="?edit">Edit</a>{{end}}
+	{{end}}
+	</div>
+</div>
+</body>
+</html>

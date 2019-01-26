@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="content">
-	<form action="/content" method="POST" class="editor">
+	<form action="/post" method="POST" class="editor">
 		{{if .ID}}
 		<h1><a href="/content/{{.URI}}">{{.URI}}</a></h1>
 		<input type="hidden" name="ID" value="{{.ID}}"/>

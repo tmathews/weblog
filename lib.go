@@ -75,6 +75,19 @@ type URLPreview struct {
 	DateCrawled  time.Time
 }
 
+func (p *URLPreview) IsFulfilled() bool {
+	if p.URL == "" {
+		return false
+	}
+	if p.Title != "" && p.Snippet != "" {
+		return true
+	}
+	if p.OembedHTML != "" {
+		return true
+	}
+	return false
+}
+
 type PageInfo struct {
 	Current   int
 	Previous  int
@@ -165,7 +178,7 @@ FROM
 	sql += `
 WHERE
 	date <= ?`
-	
+
 	args = []interface{}{time.Now()}
 	if page.PostType != TypeAll {
 		sql += ` AND t1.type = ?`
