@@ -83,7 +83,7 @@ func IsAuthorized(c *gin.Context) bool {
 	return authed && ok
 }
 
-func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string) {
+func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password, key, cert string) {
 
 	//gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
@@ -374,7 +374,11 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string)
 		c.File(filename)
 	})
 
-	r.Run(":" + strconv.Itoa(port))
+	if key != "" && cert != "" {
+		r.RunTLS(":" + strconv.Itoa(port), cert, key)
+	} else {
+		r.Run(":" + strconv.Itoa(port))
+	}
 }
 
 type FileItem struct {

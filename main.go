@@ -13,6 +13,8 @@ func main() {
 	var sampleme bool
 	var templateGlob string
 	var assetsDir string
+	var key string
+	var cert string
 	var port int
 
 	flag.IntVar(&port, "port", 8080, "Network port to occupy.")
@@ -21,6 +23,8 @@ func main() {
 	flag.StringVar(&templateGlob, "templates", "./templates/*.html", "The template glob to use.")
 	flag.StringVar(&assetsDir, "files", "./files", "Assets directory to serve.")
 	flag.BoolVar(&sampleme, "sample", false, "Create the sample post on start up?")
+	flag.StringVar(&key, "sslKey", "", "SSL private key file")
+	flag.StringVar(&cert, "sslCert", "", "SSL certificate file")
 	flag.Parse()
 
 	db, err := sql.Open("sqlite3", dbfile)
@@ -50,5 +54,5 @@ func main() {
 		panic(err)
 	}
 
-	StartServer(db, port, templateGlob, assetsDir, password)
+	StartServer(db, port, templateGlob, assetsDir, password, key, cert)
 }
