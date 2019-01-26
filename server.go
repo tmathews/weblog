@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/disintegration/imaging"
 	"io"
 	"os"
 	"path"
@@ -336,6 +337,10 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string)
 			})
 			return
 		}
+		if q, ok := c.GetQuery("size"); ok && IsImage(fi) {
+			ServeImageCache(c, filename, q)
+			return
+		}
 		if fi.IsDir() {
 			if !IsAuthorized(c) {
 				HandleError(c, ErrNoAuth)
@@ -393,4 +398,43 @@ func IsReqJSON(c *gin.Context) bool {
 		return true
 	}
 	return false
+}
+
+func IsImage(info os.FileInfo) bool {
+	ext := filepath.Ext(info.Name())
+	return ext == ".jpg" || ext == ".jpeg" || ext == ".png"
+}
+
+func ServeImageCache(c *gin.Context, filename, size string) {
+	s, err := strconv.Atoi(size)
+	if err != nil {
+		HandleError(c, errors.New(fmt.Sprintf("invalid image size '%s'", size)))
+		return
+	}
+	dir := filepath.Dir(filename)
+	base := filepath.Base(filename)
+	ext := filepath.Ext(filename)
+	name := base[:len(base)-len(ext)]
+	cached := filepath.Join(dir, fmt.Sprintf("%s_%s_%s", name, size, ext))
+	info, err := os.Stat(cached)
+	if os.IsNotExist(err) {
+		img, err := imaging.Open(filename)
+		if err != nil {
+			HandleError(c, err)
+			return
+		}
+		img = imaging.Thumbnail(img, s, s, imaging.Lanczos)
+		if err := imaging.Save(img, cached); err != nil {
+			HandleError(c, err)
+			return
+		}
+		c.File(cached)
+	} else if err != nil {
+		HandleError(c, err)
+		return
+	} else if info.IsDir() {
+		HandleError(c, errors.New("cached image file is a directory"))
+		return
+	}
+	c.File(cached)
 }

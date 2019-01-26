@@ -74,16 +74,16 @@ var content = document.getElementById('content')
 var body = document.querySelector("textarea[name='Body']")
 var snippet = document.querySelector("input[name='Snippet']")
 body.style.display = "none"
+function update(html) {
+    body.textContent = html
+    var p = content.querySelector('p')
+    if (p) {
+        snippet.value = p.textContent
+    }
+}
 var editor = pell.init({
 	element: content,
-	onChange: (html) => {
-		console.log("why tho?")
-		body.textContent = html
-		var p = content.querySelector('p')
-		if (p) {
-			snippet.value = p.textContent
-		}
-	},
+	onChange: update,
 	defaultParagraphSeparator: 'p',
 	styleWithCSS: false,
 	actions: [
@@ -100,6 +100,15 @@ var editor = pell.init({
 		'link',
 		'image',
 	],
+})
+content.addEventListener("click", (ev) => {
+    if (ev.target.tagName == "IMG") {
+	    var x = window.prompt("Replace URL", ev.target.src)
+		if (x != null) {
+		    ev.target.src = x
+		}
+    	update(editor.content.innerHTML)
+	}
 })
 var x = body.textContent
 if (x == "" && {{.Type}} == 0) {
