@@ -89,14 +89,16 @@ func (p *URLPreview) IsFulfilled() bool {
 }
 
 type PageInfo struct {
-	Current   int
-	Previous  int
-	Next      int
-	Total     int
-	ItemTotal int
-	ItemCount int
-	PostType  PostType
-	Tag       string
+	Current    int
+	Previous   int
+	Next       int
+	Total      int
+	ItemTotal  int
+	ItemCount  int
+	ItemLimit  int
+	PostType   PostType
+	Tag        string
+	DateFilter time.Time `json:"-"`
 }
 
 func (p *PageInfo) HasPrevious() bool {
@@ -108,7 +110,7 @@ func (p *PageInfo) HasNext() bool {
 }
 
 func (p *PageInfo) CalculateTotal() {
-	p.Total = int(math.Ceil(float64(p.ItemCount) / float64(p.ItemTotal)))
+	p.Total = int(math.Ceil(float64(p.ItemTotal) / float64(p.ItemLimit)))
 	p.Previous = p.Current - 1
 	p.Next = p.Current + 1
 }
@@ -143,13 +145,7 @@ func GetContents(db *sql.DB, page *PageInfo) ([]*ContentPiece, error) {
 	if err := stmt.QueryRow(args...).Scan(&count); err != nil {
 		return nil, err
 	}
-	if count >= 50 {
-		page.ItemCount = 50
-	} else {
-		page.ItemCount = count
-	}
 	page.ItemTotal = count
-	page.CalculateTotal()
 
 	sql = `
 SELECT
@@ -179,7 +175,7 @@ FROM
 WHERE
 	date <= ?`
 
-	args = []interface{}{time.Now()}
+	args = []interface{}{page.DateFilter}
 	if page.PostType != TypeAll {
 		sql += ` AND t1.type = ?`
 		args = append(args, page.PostType)
@@ -193,14 +189,14 @@ ORDER BY
 	date DESC
 LIMIT ?
 OFFSET ?`
-	args = append(args, page.ItemCount, (page.Current-1)*page.ItemCount)
+	args = append(args, page.ItemLimit, (page.Current-1)*page.ItemLimit)
 
 	stmt, err = db.Prepare(sql)
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
-	var xs []*ContentPiece
+	xs := make([]*ContentPiece, 0)
 	rows, err := stmt.Query(args...)
 	if err != nil {
 		return nil, err
@@ -234,9 +230,10 @@ OFFSET ?`
 		if a.ResponseToURL != "" {
 			a.ResponseToURLPreview = &b
 		}
-		fmt.Println(a.Title)
 		xs = append(xs, &a)
 	}
+	page.ItemCount = len(xs)
+	page.CalculateTotal()
 	return xs, nil
 }
 

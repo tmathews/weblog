@@ -51,13 +51,13 @@
                         <ul class="tags">{{range .Tags}}<li><a href="/?tag={{.}}">{{.}}</a></li>{{end}}</ul>
                     {{end}}
                     <p><small>{{.DateString}}</small></p>
-                    {{if $.Authorized}}<a href="?edit">Edit</a>{{end}}
+                    {{if $.Authorized}}<a href="/post/{{.URI}}?edit">Edit</a>{{end}}
                 </li>
             {{end}}
         </ul>
         <div>
-            {{if .Page.HasPrevious}}<a href="./all?page={{.Page.Previous}}">Previous</a>{{end}}
-            {{if .Page.HasNext}}<a href="./all?page={{.Page.Next}}">Next</a>{{end}}
+            {{if .Page.HasPrevious}}<a href="/?page={{.Page.Previous}}&limit={{.Page.ItemCount}}">Previous</a>{{end}}
+            {{if .Page.HasNext}}<a href="/?page={{.Page.Next}}&limit={{.Page.ItemCount}}">Next</a>{{end}}
         </div>
         {{else}}
             <p>Huh, no items for that one.</p>

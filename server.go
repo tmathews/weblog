@@ -34,17 +34,24 @@ var (
 	ErrNoAuth = errors.New("not authorized")
 )
 
+func parseQueryInt(v string, d, min int) int {
+	if i, err := strconv.Atoi(v); err == nil {
+		if i < min {
+			return d
+		} else {
+			return i
+		}
+	}
+	return d
+}
+
 func GetPage(c *gin.Context) PageInfo {
 	var page PageInfo
-	pageStr := c.Query("page")
-	if pageInt, err := strconv.Atoi(pageStr); err == nil {
-		if pageInt <= 0 {
-			page.Current = 1
-		} else {
-			page.Current = pageInt
-		}
-	} else {
-		page.Current = 1
+
+	page.Current = parseQueryInt(c.Query("page"), 1, 1)
+	page.ItemLimit = parseQueryInt(c.Query("limit"), 10, 1)
+	if page.ItemLimit > 50 {
+		page.ItemLimit = 50
 	}
 
 	page.PostType = TypeAll
@@ -60,6 +67,10 @@ func GetPage(c *gin.Context) PageInfo {
 	}
 
 	page.Tag = c.Query("tag")
+	page.DateFilter = time.Now()
+	if IsAuthorized(c) {
+		page.DateFilter = time.Now().AddDate(999, 1, 1)
+	}
 
 	return page
 }
@@ -182,6 +193,10 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string)
 			c.HTML(200, "editor.html", content)
 			return
 		}
+		if !IsAuthorized(c) && time.Now().Before(content.Date) {
+			HandleError(c, ErrContentNotFound)
+			return
+		}
 		if IsReqJSON(c) {
 			c.JSON(200, content)
 			return
@@ -233,7 +248,7 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password string)
 			HandleError(c, err)
 			return
 		}
-		loc := "./content/" + res.URI
+		loc := "./post/" + res.URI
 		switch res.TransactionType {
 		case "DELETE":
 			err = DeleteContent(tx, &res.ContentPiece)
