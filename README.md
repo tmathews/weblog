@@ -6,7 +6,6 @@ to store it's contents.
 
 ## Features
 
- * Simple login system
  * Image thumbnailing
  * WYSIWYG editor for HTML posts
  * Reposting & liking URLs
@@ -18,6 +17,7 @@ to store it's contents.
  * Simple HTML templating system
  * Page aliasing for html files
  * JSON API
+ * Simple login & HTTPS capable
  
 ## The Goal
 
@@ -69,3 +69,12 @@ HTTP form payloads and does not accept JSON.
 
 You can upload and delete files to the system by logging in and visiting the
 `/files` page.
+
+### Authentication
+
+You can login to edit your posts by visiting `/login` and entering the password
+you provided with the respected startup flag `-password`. Make sure to use a 
+good password!
+
+You can also start weblog to run with HTTPS instead of HTTP by providing the 
+paths for the cert and key files using the `-sslCert` and `-sslKey` flags.
