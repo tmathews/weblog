@@ -51,6 +51,7 @@
 		</div>
 		
 		<div>
+			<button type="button" data-on="Edit HTML" data-off="WYSIWYG" onclick="toggleEditor(event, this)">Edit HTML</button>
 			<div id="content" class="pell"></div>
 			<textarea name="Body" cols=80 rows=30>{{.HTML}}</textarea>
 		</div>
@@ -115,6 +116,13 @@ if (x == "" && {{.Type}} == 0) {
 	x = "<p>Hello world</p>"
 }
 editor.content.innerHTML = x
+function toggleEditor(event, element) {
+	var val = body.style.display == "none"
+	body.style.display = val ? "block" : "none"
+	editor.style.display = val ? "none" : "block"
+	element.textContent = val ? element.dataset.off : element.dataset.on
+	event.preventDefault()
+}
 </script>
 
 </body>

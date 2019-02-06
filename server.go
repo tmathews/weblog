@@ -64,6 +64,8 @@ func GetPage(c *gin.Context) PageInfo {
 			page.PostType = TypeRepost
 		case "heart":
 			page.PostType = TypeHeart
+		case "status":
+			page.PostType = TypeStatus
 		}
 	}
 
@@ -149,6 +151,8 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password, key, c
 		scope := M{
 			"Items": xs,
 			"Page":  &page,
+			"NextQuery": page.QueryString(1),
+			"PreviousQuery": page.QueryString(-1),
 		}
 		if IsReqJSON(c) {
 			c.JSON(200, scope)
@@ -172,6 +176,8 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password, key, c
 			editor = "repost"
 		case "heart":
 			editor = "heart"
+		case "status":
+			editor = "status"
 		default:
 			editor = "editor"
 		}
@@ -365,10 +371,15 @@ func StartServer(db *sql.DB, port int, templateGlob, assetsDir, password, key, c
 				HandleError(c, err)
 				return
 			}
-			c.HTML(200, "files.html", M{
+			payload := M{
 				"Directory": p,
 				"Files":     files,
-			})
+			}
+			if IsReqJSON(c) {
+				c.JSON(200, payload)
+			} else {
+				c.HTML(200, "files.html", payload)
+			}
 			return
 		}
 		c.File(filename)
@@ -405,7 +416,7 @@ func IsReqJSON(c *gin.Context) bool {
 }
 
 func IsImage(info os.FileInfo) bool {
-	ext := filepath.Ext(info.Name())
+	ext := strings.ToLower(filepath.Ext(info.Name()))
 	return ext == ".jpg" || ext == ".jpeg" || ext == ".png"
 }
 

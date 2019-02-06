@@ -7,6 +7,8 @@ import (
 	"html/template"
 	"math"
 	"net/http"
+	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -24,12 +26,14 @@ const (
 	TypeRepost  PostType = 1
 	TypeHeart   PostType = 2
 	TypeAll     PostType = 3
+	TypeStatus  PostType = 4
 )
 
 var (
 	ErrURIUsed         = errors.New("URI in use")
 	ErrContentNotFound = errors.New("content not found")
 	ErrInvalidID       = errors.New("invalid id")
+	ErrInvalidType     = errors.New("invalid type")
 )
 
 type ContentPiece struct {
@@ -51,7 +55,7 @@ func (c *ContentPiece) HTML() template.HTML {
 }
 
 func (c *ContentPiece) DateString() string {
-	return c.Date.Format("January 2006 2 at 03:04AM")
+	return c.Date.Format("January 2006 2 at 03:04PM")
 }
 
 func (c *ContentPiece) DateInputString() string {
@@ -115,6 +119,16 @@ func (p *PageInfo) CalculateTotal() {
 	p.Next = p.Current + 1
 }
 
+func (p *PageInfo) QueryString(offset int) template.URL {
+	v := url.Values{}
+	v.Set("page", strconv.Itoa(p.Current + offset))
+	v.Set("limit", strconv.Itoa(p.ItemLimit))
+	if p.Tag != "" {
+		v.Set("tag", p.Tag)
+	}
+	return template.URL(v.Encode())
+}
+
 func CreateSample(tx *sql.Tx) error {
 	err := CreateContent(tx, &ContentPiece{
 		Title:   "Sample Post",
@@ -132,10 +146,18 @@ func CreateSample(tx *sql.Tx) error {
 
 func GetContents(db *sql.DB, page *PageInfo) ([]*ContentPiece, error) {
 	args := []interface{}{time.Now()}
-	sql := `SELECT COUNT(id) AS count FROM content WHERE date <= ?`
+	sql := `SELECT COUNT(t1.id) AS count FROM content AS t1 `
+	if page.Tag != "" {
+		sql += `INNER JOIN tag AS t2 ON (t1.id = t2.id)`
+	}
+	sql += ` WHERE t1.date <= ?`
 	if page.PostType != TypeAll {
-		sql += ` AND type = ?`
+		sql += ` AND t1.type = ?`
 		args = append(args, page.PostType)
+	}
+	if page.Tag != "" {
+		sql += ` AND t2.value = ?`
+		args = append(args, page.Tag)
 	}
 	stmt, err := db.Prepare(sql)
 	if err != nil {
@@ -305,6 +327,9 @@ func CreateContent(tx *sql.Tx, c *ContentPiece) error {
 	if !ok {
 		return ErrURIUsed
 	}
+	if ValidateType(c.Type) {
+		return ErrInvalidType
+	}
 
 	id, err := uuid.NewV4()
 	if err != nil {
@@ -385,6 +410,9 @@ func UpdateContent(tx *sql.Tx, c *ContentPiece, rescrape bool) error {
 	}
 	if x != nil && x.ID != c.ID {
 		return ErrURIUsed
+	}
+	if ValidateType(c.Type) {
+		return ErrInvalidType
 	}
 
 	// It changed!
@@ -563,6 +591,22 @@ func ScrapURLPreview(s string) (*URLPreview, error) {
 		p.Snippet = og.Description
 	}
 	return &p, nil
+}
+
+// Validates that the PostType is consumable into the database
+func ValidateType(t PostType) bool {
+	xs := []PostType{
+		TypeStatus,
+		TypeDefault,
+		TypeHeart,
+		TypeRepost,
+	}
+	for _, x := range xs {
+		if t == x {
+			return true
+		}
+	}
+	return false
 }
 
 func PrepareDb(db *sql.DB) error {

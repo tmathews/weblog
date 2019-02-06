@@ -56,8 +56,8 @@
             {{end}}
         </ul>
         <div>
-            {{if .Page.HasPrevious}}<a href="/?page={{.Page.Previous}}&limit={{.Page.ItemCount}}">Previous</a>{{end}}
-            {{if .Page.HasNext}}<a href="/?page={{.Page.Next}}&limit={{.Page.ItemCount}}">Next</a>{{end}}
+            {{if .Page.HasPrevious}}<a href="/?{{.PreviousQuery}}">Previous</a>{{end}}
+            {{if .Page.HasNext}}<a href="/?{{.NextQuery}}">Next</a>{{end}}
         </div>
         {{else}}
             <p>Huh, no items for that one.</p>

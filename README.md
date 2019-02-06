@@ -8,6 +8,7 @@ to store it's contents.
 
  * Image thumbnailing
  * WYSIWYG editor for HTML posts
+ * Tagging
  * Reposting & liking URLs
  * URL Oembed previews
  * Simple file manager
