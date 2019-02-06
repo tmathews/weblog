@@ -327,7 +327,7 @@ func CreateContent(tx *sql.Tx, c *ContentPiece) error {
 	if !ok {
 		return ErrURIUsed
 	}
-	if ValidateType(c.Type) {
+	if !IsValidType(c.Type) {
 		return ErrInvalidType
 	}
 
@@ -411,7 +411,7 @@ func UpdateContent(tx *sql.Tx, c *ContentPiece, rescrape bool) error {
 	if x != nil && x.ID != c.ID {
 		return ErrURIUsed
 	}
-	if ValidateType(c.Type) {
+	if !IsValidType(c.Type) {
 		return ErrInvalidType
 	}
 
@@ -594,12 +594,12 @@ func ScrapURLPreview(s string) (*URLPreview, error) {
 }
 
 // Validates that the PostType is consumable into the database
-func ValidateType(t PostType) bool {
+func IsValidType(t PostType) bool {
 	xs := []PostType{
-		TypeStatus,
 		TypeDefault,
 		TypeHeart,
 		TypeRepost,
+		TypeStatus,
 	}
 	for _, x := range xs {
 		if t == x {

@@ -116,6 +116,7 @@ if (x == "" && {{.Type}} == 0) {
 	x = "<p>Hello world</p>"
 }
 editor.content.innerHTML = x
+update(x)
 function toggleEditor(event, element) {
 	var val = body.style.display == "none"
 	body.style.display = val ? "block" : "none"

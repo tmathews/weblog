@@ -13,7 +13,9 @@
             {{range .Items}}
                 <li class="{{if eq .Type 1}}repost{{end}}">
                     {{if eq .Type 0}}
-                        <h1><a href="/post/{{.URI}}">{{.Title}}</a></h1>
+                        <h1 title="{{.Title}}"><a href="/post/{{.URI}}">{{.Title}}</a></h1>
+                    {{else if eq .Type 4}}
+                        <h1 title="Status: {{.Title}}">❗ <a href="/post/{{.URI}}">{{.Title}}</a></h1>
                     {{end}}
                     {{if .ResponseToURLPreview}}
                         {{if eq .Type 1}}

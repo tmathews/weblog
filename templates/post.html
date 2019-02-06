@@ -9,7 +9,7 @@
 	{{template "sidebar.html" .}}
 	<div class="content">
 	{{with .Post}}
-		{{if eq .Type 0}}
+		{{if eq .Type 0 4}}
 		<h1>{{.Title}}</h1>
 		{{end}}
 		{{if .ResponseToURLPreview}}
