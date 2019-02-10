@@ -1,3 +1,13 @@
 <footer>
 <p>Tail Cave is the first dungeon in <a href="https://en.wikipedia.org/wiki/The_Legend_of_Zelda:_Link%27s_Awakening">The Legend of Zelda, Link's Awakening</a>.</p>
+{{if $.Authorized}}
+<nav>
+	<a href="./new">New Post</a>
+	<a href="./new?type=repost">Repost</a>
+	<a href="./new?type=heart">Heart</a>
+	<a href="./new?type=status">Set Status</a>
+	<a href="./files">Files</a>
+	<a href="./logout">Logout</a>
+</nav>
+{{end}}
 </footer>

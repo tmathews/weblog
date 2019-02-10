@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700');
+
+:root {
+    --col-default: #f1f1f1;
+}
+
+body {
+    font-family: Lato, sans-serif;
+}
+
+form.editor > div {
+    margin-bottom: 0.5em;
+}
+
+form.editor > div > label.header {
+    min-width: 200px;
+    display: inline-block;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+.content {
+    margin: 0 auto;
+    padding: 0 2em;
+}
+
+.pell {
+    border: solid 1px var(--col-default);
+}
+
+.pell-content {
+    margin: 1em;
+}
+
+.pell-actionbar {
+    background: var(--col-default);
+}
+
+.pell-button {
+    border: none;
+    padding: 0.5em 1em;
+    display: inline-block;
+    line-height: 1;
+    background: transparent;
+}
+
+input {
+    font-size: 16px;
+    font-weight: normal;
+    font-family: Lato, sans-serif;
+    border: solid 1px var(--col-default);
+    padding: 0.5em 1em;
+}
+
+input.fw {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+textarea {
+    display: block;
+    width: 100%;
+    border: solid 1px var(--col-default);
+    font-size: 16px;
+}
+
+button {
+    background: transparent;
+    color: black;
+    font-weight: bold;
+    font-size: 16px;
+    border: 3px solid var(--col-default);
+    padding: 0.5em 1em;
+    border-radius: 3px;
+}

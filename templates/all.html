@@ -5,7 +5,7 @@
     {{template "includes.html"}}
 </head>
 <body>
-<div class="flex">
+<div class="pillar-of-white">
     {{template "sidebar.html" .}}
     <div class="content">
         {{if .Items}}
@@ -64,7 +64,7 @@
         {{else}}
             <p>Huh, no items for that one.</p>
         {{end}}
-        {{template "footer.html"}}
+        {{template "footer.html" .}}
     </div>
 </div>
 </body>
