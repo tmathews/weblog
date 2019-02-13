@@ -65,12 +65,6 @@
 
 		<button>Save</button>
 	</form>
-	{{if .ID}}
-		<form action="/post" method="POST" onsubmit="return confirm('Are you sure?')">
-			<input type="hidden" name="TransactionType" value="DELETE"/>
-			<button type="submit">Delete Post</button>
-		</form>
-	{{end}}
 </div>
 
 <script type="text/javascript">

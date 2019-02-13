@@ -438,7 +438,7 @@ func ServeImageCache(c *gin.Context, filename, size string) {
 			HandleError(c, err)
 			return
 		}
-		img = imaging.Thumbnail(img, s, s, imaging.Lanczos)
+		img = imaging.Fit(img, s, s, imaging.Lanczos)
 		if err := imaging.Save(img, cached); err != nil {
 			HandleError(c, err)
 			return

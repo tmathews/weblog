@@ -48,7 +48,14 @@
 	<ul class="tags">{{range .Tags}}<li><a href="/?tag={{.}}">{{.}}</a></li>{{end}}</ul>
 	{{end}}
 	<p><small>{{.DateString}}</small></p>
-	{{if $.Authorized}}<a href="?edit">Edit</a>{{end}}
+	{{if $.Authorized}}
+		<form style="float: right" action="/post" method="POST" onsubmit="return confirm('Are you sure?')">
+			<input type="hidden" name="ID" value="{{.ID}}"/>
+			<input type="hidden" name="TransactionType" value="DELETE"/>
+			<button type="submit">Delete Post</button>
+		</form>
+		<a href="?edit">Edit</a>
+	{{end}}
 	{{end}}
 	</div>
 </div>
